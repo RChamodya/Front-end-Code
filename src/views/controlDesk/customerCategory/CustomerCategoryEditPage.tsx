@@ -14,10 +14,11 @@ import {
 import {useForm} from "react-hook-form";
 import * as Yup from "yup";
 import {yupResolver} from "@hookform/resolvers/yup";
-import {axiosInstance} from "../api/Store";
+import {axiosInstance} from "../../../api/Store";
 import {useLocation, useNavigate} from "react-router-dom";
 import {string} from "yup";
-import FormSwitchField from "../components/switch/FormSwitchField";
+import FormSwitchField from "../../../components/switch/FormSwitchField";
+import FormTextField from "../../../components/textField/FormTextField";
 
 interface CustomerCategory {
     catId: number;
@@ -40,9 +41,9 @@ const CustomerCategoryEditPage = () => {
 
     let navigate = useNavigate();
     const submitButtonControll = (data: any) => {
-        if (id){
+        if (id) {
             const payloadData = {
-                catId:parseInt(id) ,
+                catId: parseInt(id),
                 catCode: data.catCode,
                 categoryDescription: data.categoryDescription,
                 status: data.status,
@@ -52,8 +53,8 @@ const CustomerCategoryEditPage = () => {
                 income: parseFloat(data.income),
                 isDeleted: false
             }
-            axiosInstance.put(`/category/update/${id}`,payloadData)
-                .then((res:any)=>{
+            axiosInstance.put(`/category/update/${id}`, payloadData)
+                .then((res: any) => {
                     alert("category Updated!")
                     navigate("/customerCategory");
                 })
@@ -71,8 +72,8 @@ const CustomerCategoryEditPage = () => {
         income: Yup.string().required(commonError),
         status: Yup.boolean(),
         ageGreaterThan18: Yup.boolean(),
-        creditScore:Yup.string().required(commonError),
-        specializedCustomer:Yup.boolean(),
+        creditScore: Yup.string().required(commonError),
+        specializedCustomer: Yup.boolean(),
         isDeleted: Yup.boolean(),
 
     });
@@ -107,16 +108,20 @@ const CustomerCategoryEditPage = () => {
     function getCategoriesById() {
         axiosInstance.get(`/category/viewById/${id}`)
             .then((response: any) => {
+                // check undefined?
+                const responceData = response?.data?.data ?? {};
+
+
                 // console.log(response.data.body)
                 const defVals = {
-                    catId: response.data.body.catId,
-                    catCode: response.data.body.catCode,
-                    categoryDescription: response.data.body.categoryDescription,
-                    status: response.data.body.status,
-                    income: response.data.body.income,
-                    ageGreaterThan18: response.data.body.ageGreaterThan18,
-                    creditScore: response.data.body.creditScore,
-                    specializedCustomer: response.data.body.specializedCustomer,
+                    catId: responceData?.catId ?? "",
+                    catCode: responceData?.catCode ?? "",
+                    categoryDescription: responceData?.categoryDescription ?? "",
+                    status: responceData?.status ?? false,
+                    income: responceData?.income ?? null,
+                    ageGreaterThan18: responceData?.ageGreaterThan18 ?? false,
+                    creditScore: responceData?.creditScore ?? null,
+                    specializedCustomer: responceData?.specializedCustomer ?? false,
                     // isDeleted: response.data.body.isDeleted
 
                 };
@@ -133,12 +138,9 @@ const CustomerCategoryEditPage = () => {
     }
 
     useEffect(() => {
-        console.log("cat data", categories);
         if (id) {
             getCategoriesById();
         }
-
-
     }, [id])
     // const [defaultValues, setDefaultValues] = useState<any>({
     //     catId: 0,
@@ -151,133 +153,136 @@ const CustomerCategoryEditPage = () => {
     return (
 
 
-
         <>
 
-            <Typography variant="h4"   mt={5}  textAlign="center">Create Customer Category</Typography>
-        <form>
-            <Grid container spacing={2} mt={7}>
-                <Grid item xs={12} sm={12} ml={50} mr={50}>
-                    <FormControl margin="normal" fullWidth>
-                        <FormLabel>Cat ID</FormLabel>
-                        <Input
-                            type="number"
-                            {...register("catId")}
-                            error={!!errors.catId?.message}
-                            disabled
-                        />
-                        <FormHelperText>{errors.catId?.message}</FormHelperText>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={12} ml={50} mr={50}>
-                    <FormControl margin="normal" fullWidth>
-                        <FormLabel>Credit Score</FormLabel>
-                        <Input
-                            type="number"
-                            {...register("creditScore")}
-                            error={!!errors.creditScore?.message}
+            <Typography variant="h4" mt={5} textAlign="center">Create Customer Category</Typography>
+            <form>
+                <Grid container spacing={2} mt={7}>
+                    <Grid item xs={12} sm={12} ml={50} mr={50}>
+                        <FormControl margin="normal" fullWidth>
+                            <FormLabel>Cat ID</FormLabel>
+                            <Input
+                                type="number"
+                                {...register("catId")}
+                                error={!!errors.catId?.message}
+                                disabled
+                            />
+                            <FormHelperText>{errors.catId?.message}</FormHelperText>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={12} ml={50} mr={50}>
+                        <FormControl margin="normal" fullWidth>
+                            <FormLabel>Credit Score</FormLabel>
+                            <Input
+                                type="number"
+                                {...register("creditScore")}
+                                error={!!errors.creditScore?.message}
 
-                        />
-                        <FormHelperText>{errors.creditScore?.message}</FormHelperText>
-                    </FormControl>
-                </Grid>
-
-
-                <Grid item xs={12} sm={12} ml={50} mr={50}>
-                    <FormControl margin="normal" fullWidth>
-                        <FormLabel>Cat Code</FormLabel>
-                        <Input
-                            type="text"
-                            {...register("catCode")}
-                            error={!!errors.catCode?.message}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={12} ml={50} mr={50}>
-                    <FormControl margin="normal" fullWidth>
-                        <FormLabel>Category Description</FormLabel>
-                        <Input
-                            type="text"
-                            {...register("categoryDescription")}
-                            error={!!errors.categoryDescription?.message}
-                        />
-                        <FormHelperText>{errors.categoryDescription?.message}</FormHelperText>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={12} ml={50} mr={50}>
-                    <FormControl margin="normal" fullWidth>
-                        <FormLabel>Income</FormLabel>
-                        <Input
-                            type="number"
-                            {...register("income")}
-                            error={!!errors.income?.message}
-                        />
-                        <FormHelperText>{errors.income?.message}</FormHelperText>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4} lg={4} ml={50} mr={50}>
-                    <FormControl margin="normal" fullWidth>
-                       <FormSwitchField name={"status"}
-                                        label={"Status"}
-                                        helperText={errors.status?.message}
-                                        disabled={false}
-                                        error={!!errors.status?.message}
-                                        control={control}
-                                        setValue={()=>setValue}/>
-                    </FormControl>
-                </Grid>
-
-                <Grid item xs={12} sm={4} lg={4}ml={50} mr={50}>
-                    <FormControl margin="normal" fullWidth>
-                        <FormLabel></FormLabel>
-                        <FormSwitchField name={"ageGreaterThan18"}
-                                         label={"Age Greaterthan 18"}
-                                         helperText={errors.ageGreaterThan18?.message}
-                                         disabled={false}
-                                         error={!!errors.ageGreaterThan18?.message}
-                                         control={control}
-                                         setValue={()=>setValue}/>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4} lg={4} ml={50} mr={50}>
-                    <FormControl margin="normal" fullWidth>
-                        <FormLabel></FormLabel>
-                        <FormSwitchField name={"specializedCustomer"}
-                                         label={"Specialized Customer"}
-                                         helperText={errors.specializedCustomer?.message}
-                                         disabled={false}
-                                         error={!!errors.specializedCustomer?.message}
-                                         control={control}
-                                         setValue={()=>setValue}/>
-                    </FormControl>
-                </Grid>
+                            />
+                            <FormHelperText>{errors.creditScore?.message}</FormHelperText>
+                        </FormControl>
+                    </Grid>
 
 
-                {/*<Grid item xs={12} sm={12} ml={50} mr={50}>*/}
-                {/*    <FormControl margin="normal" fullWidth>*/}
-                {/*        <FormLabel> </FormLabel>*/}
-                {/*        <FormSwitchField name={"isDeleted"}*/}
-                {/*                         label={"Deleted"}*/}
-                {/*                         helperText={errors.isDeleted?.message}*/}
-                {/*                         disabled={true}*/}
-                {/*                         error={!!errors.isDeleted?.message}*/}
-                {/*                         control={control}*/}
-                {/*                         setValue={()=>setValue}/>*/}
-                {/*    </FormControl>*/}
-                {/*</Grid>*/}
-                {/*<Grid item xs={12} ml={25}  display="flex" justifyContent="left">*/}
-                {/*    <Button variant="contained" onClick={()=>{navigate("/customerCategory")}}>Back</Button>*/}
-                {/*</Grid>*/}
-                <Grid item xs={12} mb={10} display="flex" justifyContent="center">
-                    <Button variant="contained" onClick={()=>{navigate("/customerCategory")}}>Back</Button>
-                    <Button sx={{ marginLeft: 5 }} type="submit" variant="contained" color="primary"
-                            onClick={handleSubmit(submitButtonControll)}>
-                        Submit
-                    </Button>
+                    <Grid item xs={12} sm={12} ml={50} mr={50}>
+                        <FormControl margin="normal" fullWidth>
+                            <FormLabel></FormLabel>
+                            <FormTextField  label={""}
+                                            type="text"
+                                            register={register("catCode")}
+                                            error={!!errors?.catCode?.message}
+                                            helperText={errors?.catCode?.message?.toString()}
 
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={12} ml={50} mr={50}>
+                        <FormControl margin="normal" fullWidth>
+                            <FormLabel>Category Description</FormLabel>
+                            <Input
+                                type="text"
+                                {...register("categoryDescription")}
+                                error={!!errors.categoryDescription?.message}
+                            />
+                            <FormHelperText>{errors.categoryDescription?.message}</FormHelperText>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={12} ml={50} mr={50}>
+                        <FormControl margin="normal" fullWidth>
+                            <FormLabel>Income</FormLabel>
+                            <Input
+                                type="number"
+                                {...register("income")}
+                                error={!!errors.income?.message}
+                            />
+                            <FormHelperText>{errors.income?.message}</FormHelperText>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={4} lg={4} ml={50} mr={50}>
+                        <FormControl margin="normal" fullWidth>
+                            <FormSwitchField name={"status"}
+                                             label={"Status"}
+                                             helperText={errors.status?.message}
+                                             disabled={false}
+                                             error={!!errors.status?.message}
+                                             control={control}
+                                             setValue={() => setValue}/>
+                        </FormControl>
+                    </Grid>
+
+                    <Grid item xs={12} sm={4} lg={4} ml={50} mr={50}>
+                        <FormControl margin="normal" fullWidth>
+                            <FormLabel></FormLabel>
+                            <FormSwitchField name={"ageGreaterThan18"}
+                                             label={"Age Greaterthan 18"}
+                                             helperText={errors.ageGreaterThan18?.message}
+                                             disabled={false}
+                                             error={!!errors.ageGreaterThan18?.message}
+                                             control={control}
+                                             setValue={() => setValue}/>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={4} lg={4} ml={50} mr={50}>
+                        <FormControl margin="normal" fullWidth>
+                            <FormLabel></FormLabel>
+                            <FormSwitchField name={"specializedCustomer"}
+                                             label={"Specialized Customer"}
+                                             helperText={errors.specializedCustomer?.message}
+                                             disabled={false}
+                                             error={!!errors.specializedCustomer?.message}
+                                             control={control}
+                                             setValue={() => setValue}/>
+                        </FormControl>
+                    </Grid>
+
+
+                    {/*<Grid item xs={12} sm={12} ml={50} mr={50}>*/}
+                    {/*    <FormControl margin="normal" fullWidth>*/}
+                    {/*        <FormLabel> </FormLabel>*/}
+                    {/*        <FormSwitchField name={"isDeleted"}*/}
+                    {/*                         label={"Deleted"}*/}
+                    {/*                         helperText={errors.isDeleted?.message}*/}
+                    {/*                         disabled={true}*/}
+                    {/*                         error={!!errors.isDeleted?.message}*/}
+                    {/*                         control={control}*/}
+                    {/*                         setValue={()=>setValue}/>*/}
+                    {/*    </FormControl>*/}
+                    {/*</Grid>*/}
+                    {/*<Grid item xs={12} ml={25}  display="flex" justifyContent="left">*/}
+                    {/*    <Button variant="contained" onClick={()=>{navigate("/customerCategory")}}>Back</Button>*/}
+                    {/*</Grid>*/}
+                    <Grid item xs={12} mb={10} display="flex" justifyContent="center">
+                        <Button variant="contained" onClick={() => {
+                            navigate("/customerCategory")
+                        }}>Back</Button>
+                        <Button sx={{marginLeft: 5}} type="submit" variant="contained" color="primary"
+                                onClick={handleSubmit(submitButtonControll)}>
+                            Submit
+                        </Button>
+
+                    </Grid>
                 </Grid>
-            </Grid>
-        </form>
+            </form>
 
         </>
     )

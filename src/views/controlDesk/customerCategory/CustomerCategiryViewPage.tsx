@@ -1,11 +1,12 @@
 import {Button, Grid, Typography} from "@mui/material";
-import BasicTable from "../components/landingPage/table/BasicTable";
+import BasicTable from "../../../components/table/BasicTable";
 import React, {useEffect, useState} from "react";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {axiosInstance} from "../api/Store";
+import {axiosInstance} from "../../../api/Store";
 import {useNavigate} from "react-router-dom";
+import BackButton from "../../../components/button/BackButton";
 
 function CustomerCategoryViewPage(){
 

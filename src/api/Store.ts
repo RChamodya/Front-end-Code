@@ -4,5 +4,5 @@ const headers = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Meth
 export const axiosInstance = axios.create({
     baseURL: "http://localhost:8080/api/v1/",
     responseType: "json",
-    headers: headers,
+    // headers: headers,
 });

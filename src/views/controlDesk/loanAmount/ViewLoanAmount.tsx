@@ -1,8 +1,8 @@
 import {Button, Grid, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {axiosInstance} from "../api/Store";
-import BasicTable from "../components/landingPage/table/BasicTable";
+import {axiosInstance} from "../../../api/Store";
+import BasicTable from "../../../components/table/BasicTable";
 
 function ViewLoanAmount(){
 
